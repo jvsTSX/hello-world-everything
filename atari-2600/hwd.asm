@@ -313,6 +313,9 @@ DrawLineLoop: ; ////////////////////////////////////////////////////////////////
   beq LinesDone
   jmp TextRenderLoop
 LinesDone:
+	lda #0 ; clear sprites to avoid garbage being shown past the last line
+	sta GRP0
+	sta GRP1
 	sta WSYNC ; wait 1 line to total 192
 
 
