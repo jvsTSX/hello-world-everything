@@ -8,6 +8,33 @@ dasm hwd.asm -f3 -ohwd.bin
 # System Summary
 since this machine don't have information so readily available, i will provide some information worth mentioning here
 
+## VIDEO
+the video of the Channel F consists of a 128 wide by 64 tall 2-bit-per-pixel bitmap, the bitmap is write-only and can only be written to one pixel at a time (using ports), and each pixel write only take effect everytime a scanline passes
+
+however not the entire bitmap is visible on your television, part of it is cut out by the borders of the television (overscan) and some is not rendered at all! an area of around 98 pixels wide and 58 pixels tall, starting at 7 pixels from the left border and 4 pixels from the top border should be visible on all sets
+
+as for the pixels that are not rendered, pixels 125 and 126 of the bitmap defines the palette of the entire row of those pixels' Y position, palettes will choose black/white mode or change the BKG color on the normal palettes like this
+|125|126|color 00|color 01| color 10| color 11|
+|-|-|-|-|-|-|
+|0|0|green|red|blue|light green|
+|0|1|green|red|blue|light grey|
+|1|0|green|red|blue|light blue|
+|1|1|white|white|white|black|
+
+note that palettes have a latency of 1 scanline, the pixels are 5 scanlines tall so changing between B/W and color palettes will result in a tiny sub-pixel gap between pixel rows
+
+
+## SOUND
+controlled by the top two bits of port 5, a very crude 3-tone beeper
+
+|Tone AN|Tone BN|approx frequency|
+|-|-|-|
+|0|0|sound off|
+|0|1|1000 Hz (B-5)|
+|1|0|500 Hz (B-4)|
+|1|1|125 Hz (B-2)|
+
+
 ## CPU
 fairchild F8 at 1.7MHz
 
@@ -18,8 +45,9 @@ you can find some info at this wiki https://channelf.se/veswiki/index.php?title=
 but here's a quick summary of that i wrote while making this thing
 
 - flags: arranged as OZCS
-- cycle notation: 2 clocks = 1 machine cycle so a short cycle is 2 and a long cycle is 3
-- note that PI, JMP and DCI destroy the accumulator!
+- cycle notation: 2 clocks = 1 machine cycle so a short cycle is 2 machine cycles and a long cycle is 3 machine cycles
+- note that PI and JMP destroy the accumulator!
+- for conditional branches, the first number is for when the branch is not taken
 
 |mnemonic|bytes|cycles|flags|action|
 |-|-|-|-|-|
