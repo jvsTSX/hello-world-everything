@@ -6,28 +6,33 @@ dasm hwd.asm -f3 -ohwd.bin
 ```
 
 # System Summary
-since this machine don't have information so readily available, i will provide some information worth mentioning here
+Since this machine don't have a lot of information readily available, i will provide some worth mentioning here
 
 ## VIDEO
-the video of the Channel F consists of a 128 wide by 64 tall 2-bit-per-pixel bitmap, the bitmap is write-only and can only be written to one pixel at a time (using ports), and each pixel write only take effect everytime a scanline passes
+The video of the Channel F consists of a 128 wide by 64 tall 2-bit-per-pixel bitmap, the bitmap is write-only and can only be written in a per-pixel basis using the ports, and each pixel write will only take effect everytime a scanline passes
 
-however not the entire bitmap is visible on your television, part of it is cut out by the borders of the television (overscan) and some is not rendered at all! an area of around 98 pixels wide and 58 pixels tall, starting at 7 pixels from the left border and 4 pixels from the top border should be visible on all sets
+- Port 0 bit 5 will signal a write to VRAM, reading from this port gives you console's switches and buttons
+- Port 1 bits 6 and 7 are the pixel's color, reading from this port gives you the Right player controls
+- Port 4 is the pixel X coord, reading from this port gives you the Left player controls
+- Port 5 is the pixel Y coord and sound tone select
 
-as for the pixels that are not rendered, pixels 125 and 126 of the bitmap defines the palette of the entire row of those pixels' Y position, palettes will choose black/white mode or change the BKG color on the normal palettes like this
-|125|126|color 00|color 01| color 10| color 11|
+However not the entire bitmap is visible on your television, part of it is cut out by the borders of the tube and front panel, and some are not rendered at all! An area of around 98 pixels wide and 58 pixels tall, starting at 7 pixels from the left border and 4 pixels from the top border should be visible on all sets
+
+As for the pixels that are not rendered, pixels 125 and 126 of the bitmap defines the palette of the entire row of those pixels' Y position, palettes will choose black/white mode or change the BKG color
+|126|125|color 00|color 01|color 10|color 11 (BKG)|
 |-|-|-|-|-|-|
 |0|0|green|red|blue|light green|
 |0|1|green|red|blue|light grey|
 |1|0|green|red|blue|light blue|
 |1|1|white|white|white|black|
 
-note that palettes have a latency of 1 scanline, the pixels are 5 scanlines tall so changing between B/W and color palettes will result in a tiny sub-pixel gap between pixel rows
+Note that palettes have a latency of 1 scanline untill they take effect, the pixels are 5 scanlines tall so changing between B/W and color palettes will result in a tiny sub-pixel gap between pixel rows
 
 
 ## SOUND
-controlled by the top two bits of port 5, a very crude 3-tone beeper
+Controlled by the top two bits of port 5, a very crude 3-tone beeper
 
-|Tone AN|Tone BN|approx frequency|
+|Tone BN|Tone AN|approx frequency|
 |-|-|-|
 |0|0|sound off|
 |0|1|1000 Hz (B-5)|
@@ -36,18 +41,18 @@ controlled by the top two bits of port 5, a very crude 3-tone beeper
 
 
 ## CPU
-fairchild F8 at 1.7MHz
+Fairchild F8, two-chip 8-bit CPU (clocked at 1.7MHz)
 
-it's a very strange harvard architecture thing with a weird cycle notation of 4-clock cycles and 6-clock cycles (long and short cycles, respectively)
+It's overall a very strange harvard architecture thing with a weird cycle system of 4-clock cycles and 6-clock cycles (long and short cycles, respectively)
 
-you can find some info at this wiki https://channelf.se/veswiki/index.php?title=Opcode
+You can find more detailed info about the F8 opcodes, timing and ROMC modes at this wiki's page https://channelf.se/veswiki/index.php?title=Opcode
 
-but here's a quick summary of that i wrote while making this thing
+But here's a quick summary of that i wrote while making this thing
 
-- flags: arranged as OZCS
-- cycle notation: 2 clocks = 1 machine cycle so a short cycle is 2 machine cycles and a long cycle is 3 machine cycles
-- note that PI and JMP destroy the accumulator!
-- for conditional branches, the first number is for when the branch is not taken
+- Flags are arranged as OZCS (Overflow Zero Carry Sign)
+- Cycle notation: 2 clocks = 1 machine cycle so a short cycle is 2 machine cycles and a long cycle is 3 machine cycles
+- Note that PI and JMP will destroy the accumulator's previous contents
+- For conditional branches, the first number is for when the branch is not taken
 
 |mnemonic|bytes|cycles|flags|action|
 |-|-|-|-|-|
@@ -70,7 +75,7 @@ but here's a quick summary of that i wrote while making this thing
 ||||||
 |INS 0/1|1|4|0X0X|load A from port 0 or 1|
 |INS 4/5|1|8|0X0X|load A from port 4 or 5, these ports are slower to communicate due to being on another chip|
-|IN #8|2|8|0X0X||load A from ports 0-255|
+|IN #8|2|8|0X0X|load A from ports 0-255|
 |OUTS 0/1|1|4||store A into ports 0 or 1|
 |OUTS 4/5|1|4||store A into ports 4 or 5, these ports are slower to communicate due to being on another chip|
 |OUT #8|2|8||store A into ports 0-255|
@@ -84,7 +89,7 @@ but here's a quick summary of that i wrote while making this thing
 |ADC|1|5||add Accumulator into DC0|
 |NS rN|1|2|0X0X|AND A with register N|
 |NM|1|5|0X0X|AND A with byte pointed by DC0|
-|NI #0|2|5|0X0X|AND A with 8-bit constant|
+|NI #8|2|5|0X0X|AND A with 8-bit constant|
 |XS rN|1|2|0X0X|XOR A with register N|
 |XM|1|5|0X0X|XOR A with byte pointed by DC0|
 |XI #8|2|5|0X0X|XOR A with 8-bit constant|
@@ -113,9 +118,9 @@ but here's a quick summary of that i wrote while making this thing
 |BZ #8|2|6/7||branch on Zero flag set|
 |BNZ #8|2|6/7||branch on Zero flag clear|
 |BNO #8|2|6/7||branch on Overflow flag clear|
-|BT #3 #8|2|6/7||branch if all the bits on the 3-bit bitmask are True|
-|BF #3 #8|2|6/7||branch if all the bits on the 3-bit bitmask are False|
-|BR7 #8|2|4/5||
+|BT #3 #8|2|6/7||branch if all the set bits on the 3-bit bitmask are True|
+|BF #3 #8|2|6/7||branch if all the set bits on the 3-bit bitmask are False|
+|BR7 #8|2|4/5||branch if ISAR's lower half is not 7|
 |PK|1|5||call address stored on register pair K|
 |PI #16|3|13||call 16-bit address and destroys A|
 |POP|1|4||return to last value stored on the return address register|
