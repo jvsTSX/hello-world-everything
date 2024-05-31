@@ -1,19 +1,19 @@
 ; ///////////////////////////////////////////////////////////////////////////////////////////// 
 
-; interleaved text display with ASCII input by jvsTSX (2023)
+; interleaved text display with ASCII input by jvsTSX (2024)
 ; it should say anything you wish! so long as it's uppercase ASCII
 
 ; note: this started as an 8-bit workshop project but javatari.js does not emulate HMOVE correctly
 
 ; >>>>>>>> thanks to <<<<<<<<<
 ; akumanatt for documenting the +8 behaviour of HMOVE register
-; nocash for the 2600 documentation
+; nocash for the 2600 documentation - https://problemkaputt.de/2k6specs.htm
 
 ; >>>>>> tools required <<<<<<
-; - CA65 assembler from CC65 suite
+; - CA65 assembler from CC65 suite - https://github.com/cc65/cc65
 ; - a terminal that can run CA65
 ; - a text editor to read this
-; - stella emulator is recommended for testing
+; - stella emulator is recommended for testing - https://stella-emu.github.io/
 
 .OUT "DON'T LET ET DOWN"
 
