@@ -26,7 +26,7 @@ As for the pixels that are not rendered, pixels 125 and 126 of the bitmap define
 |1|0|green|red|blue|light blue|
 |1|1|white|white|white|black|
 
-Note that palettes have a latency of 1 scanline untill they take effect, the pixels are 5 scanlines tall so changing between B/W and color palettes will result in a tiny sub-pixel gap between pixel rows
+Note that palettes have a latency of 1 scanline untill they take effect, the pixels are 4 scanlines tall on an NTSC machine or 5 scanlines tall on a PAL machine so changing between B/W and color palettes will result in a tiny sub-pixel gap between pixel rows
 
 
 ## SOUND
