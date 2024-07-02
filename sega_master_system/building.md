@@ -30,5 +30,5 @@ gcc chksum.c
 
 And run it after having the ROM fully assembled, make sure this is your LAST step, as assembling the ROM again will get rid of the checksum.
 
-#Support
+# Support
 So far it only displays a simple hello world on a SMS1 compliant setting, SMS2 detection maybe implemented later (todo?)
