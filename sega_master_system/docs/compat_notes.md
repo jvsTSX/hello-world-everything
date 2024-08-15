@@ -9,7 +9,7 @@ The VDP is a very troublesome component in this aspect, the differences between 
 ## BIOSes
 Early on with the Mark III units in Japan, those lack a boot ROM and will immediately start running your program as the first thing when you power the console on, later the japanese Master System (not to be confused with western models under the same name) comes with a built-in 4KB boot ROM that will initialize a few things for you and display a bumper screen (a very fancy one at that!) if it doesn't see a cartridge inserted, and your software still starts without any additional checks. The Korean model "Samsung Gam Boy" does the same checking methods, only looking for open bus patterns instead of searching for the ROM header.
 
-However the European and North American Master System models you may be familiar with, contains a boot ROM that will check for a small 8-byte header in your cartridge in 3 different locations: $1FF0, $3FF0 and $4FF0.
+However the European and North American Master System models you may be familiar with, contains a boot ROM that will check for a small 8-byte header in your cartridge in 3 different locations: $1FF0, $3FF0 and $7FF0.
 
 The header's contents consist of:
 ```

@@ -105,7 +105,7 @@ Bits 7~4 sets the literal pin output value, bits 3~0 defines if the pins functio
 |1|Port B Right button|
 |0|Port B Left button|
 
-Controller buttons are active low, therefore 0 is pressed and 1 is released.
+Controller buttons are active low, therefore 0 is pressed and 1 is released. The TH pins are for the light gun controller, when the TH pin is pulled the H-counter register will remember the current dot position.
 
 ## Links
 [Techno-Junk SMS Tech Document](http://www.techno-junk.org/txt/smstech.txt)
