@@ -23,7 +23,7 @@ int main()
         // info header
         uint32_t imgheadersize;  // must be '40'
         uint32_t imgwidth;       // must be '128'
-        uint32_t imgheight;      // must be '64'
+        uint32_t imgheight;      // must be '128'
         uint32_t imgplanesbpp;   // must be 0x40001
         uint32_t imgcompression; // must be '0'
         uint32_t imgsize;        // mspaint sets this to '0'
@@ -59,7 +59,7 @@ int main()
 
     if ((fileheader.imgplanesbpp & 0xFFFF0000) != 0x40000)
     {
-        fprintf(stderr, "Error: Image must not be 4-bit per pixel\n");
+        fprintf(stderr, "Error: Image must be 4-bit per pixel\n");
         errorflag++;
     }
 
